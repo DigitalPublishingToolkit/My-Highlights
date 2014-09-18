@@ -1,0 +1,291 @@
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Highlights</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+
+        <link rel="stylesheet" href="assets/app.min.css">
+
+    </head>
+    <body>
+    
+      <div id="app">
+        <header id="header" role="banner">
+        </header>
+
+        <div id="app-canvas-container">
+          <div id="app-canvas">
+          </div>
+        </div>
+        
+        <nav id="footer" role="navigation">
+          <ul id="highlights-my-choices" class="choices">
+            <li><a href="#/checkout" class="btn-icon"><span class="icon icon-checkmark-large"></span> <span class="btn-label">Checkout</span></a></li>
+            <li><a href="#" id="clear-my-highlights" class="btn-icon"><span class="icon icon-cancel"></span> <span class="btn-label">Clear All</span></a></li>
+          </ul>
+          <ul id="highlights-checkout-choices" class="choices">
+            <li><a href="#/generate" class="btn-icon"><span class="icon icon-gear"></span> <span class="btn-label">Generate</span></a></li>
+            <li><a href="#/my-highlights" id="clear-my-highlights" class="btn-icon"><span class="icon icon-back"></span> <span class="btn-label">Back</span></a></li>
+          </ul>
+          
+          <div id="navigation" data-role="navbar">
+            <ul>
+              <li><a href="#/highlights" id="btn-highlights"><span class="icon-list-large btn-icon"></span><span class="btn-label">Highlights</span></a></li>
+              <li><a href="#/search" id="btn-search"><span class="icon-search-large btn-icon"></span><span class="btn-label">Search</span></a></li>
+              <li><a href="#/filter" id="btn-filter"><span class="icon-filter-large btn-icon"></span><span class="btn-label">Filter</span></a></li>
+              <li><a href="#/guide" id="btn-guide"><span class="icon-network-large btn-icon"></span><span class="btn-label">Guide</span></a></li>
+              <li><a href="#/my-highlights" id="btn-my-highlights"><span class="icon-my-highlights btn-icon"></span><span class="btn-label">My Highlights</span></a></li>
+            </ul>
+          </div>
+        </nav>
+        
+      </div>
+
+      <div id="higlights-clear-all" class="modal">
+        <div class="modal-header"></div>
+        <div class="modal-inner">
+          <p>Are you sure you want to clear all of your Highlights?</p>
+          <p>Clearing cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn close cancel">Cancel</a> <a href="#" class="btn btn-primary clear close">Clear My Highlights</a>
+        </div>
+      </div>
+
+      <div id="higlights-error" class="modal">
+        <div class="modal-header"><h1>Connection Error</h1></div>
+        <div class="modal-inner">
+          <p>Failed to connect to the Highlights server, please try again in a little while.</p>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn btn-primary retry">Retry</a>
+        </div>
+      </div>
+
+      <!-- Highlights overview layout -->
+      <script id="highlights-template" type="text/x-handlebars-template">
+        <div class="page">
+          <div class="page-inner">
+            <div id="page-header">
+              Stedelijk Collection
+              <br />My/<br />
+              Highlights
+            </div>
+          </div>
+          
+          <div id="highlights-overview">
+            <div class="grid-sizer"></div>
+            <div id="highlights-container">
+            </div>
+          </div>
+        </div>
+      </script>
+
+      <!-- Single page layout -->
+      <script id="highlights-single-template" type="text/x-handlebars-template">
+        <div class="page">
+          <div id="highlight-details" class="page-inner">
+          </div>
+        </div>
+      </script>
+    
+      <!-- Show a single Highlight in an overview -->
+      <script id="highlights-item-template" type="text/x-handlebars-template">
+        {{#each highlights}}
+        <a href="#/highlight/{{ID}}" class="highlight" style="background-image: url('{{get-thumbnail}}');">
+          <span class="highlight-inner">
+            <span class="highlight-overlay"></span>
+            <span class="highlight-title">{{{title}}}</span>
+          </span>
+        </a>
+        {{/each}}
+      </script>
+      
+      <!-- Show the details of a Highlight -->
+      <script id="highlight-details-template" type="text/x-handlebars-template">
+        {{#each attachments}}
+        <img src="{{guid}}" alt="{{post_title}}" />
+        {{/each}}
+        <h1>{{{post_title}}}</h1>
+        <h2>{{{post_subtitle}}}</h2>
+
+        <div id="highlight-details-metadata">
+        </div>
+        
+        <div id="highlight-details-content">
+        {{{post_content}}}
+        </div>
+        
+        <ul id="highlight-choices" class="choices">
+          {{#each resources}}
+            <li><a id="resource-{{ID}}" href="" class="{{is-my-highlight}}"><span class="icon icon-{{post_type}}"></span> <span class="btn-label">{{post_type}}</span></a></li>
+          {{/each}}
+        </ul>
+      </script>
+      
+      <!-- Search bar -->
+      <script id="highlights-metadata-template" type="text/x-handlebars-template">
+        {{#each meta}}
+        <h2>{{this.name}}</h2>
+        {{this.value}}
+        {{/each}}
+      </script>
+      
+      <!-- Search bar -->
+      <script id="highlights-search-template" type="text/x-handlebars-template">
+        <div id="header-search">
+          <div id="header-search-inner">
+            <input type="search" id="search" placeholder="Search..." />
+            <span class="icon icon-search"></span>
+            <span class="icon icon-close"></span>
+          </div>
+        </div>
+      </script>
+
+      <!-- Filter layout -->
+      <script id="highlights-filter-template" type="text/x-handlebars-template">
+        <div id="highlights-filter" class="page">
+          <div class="page-inner">
+            <h2><span class="icon icon-label"></span> Art Movement</h2>
+            <div id="highlights-filter-list-movements" class="highlights-filter-list-container"></div>
+
+            <h2><span class="icon icon-list"></span> Collection</h2>
+            <div id="highlights-filter-list-collections" class="highlights-filter-list-container"></div>
+  
+            <h2><span class="icon icon-calendar"></span> Period</h2>
+            <div id="highlights-filter-list-periods" class="highlights-filter-list-container"></div>
+  
+            <!-- <h2><span class="icon icon-user"></span> Artist</h2>
+            <div id="highlights-filter-list-artists" class="highlights-filter-list-container"></div> -->
+          </div>
+        </div>
+      </script>
+      
+      <!-- Filter lists -->
+      <script id="highlights-filter-list-movements-template" type="text/x-handlebars-template">
+        <ul class="highlights-filter-list">
+        {{#each items}}
+          <li><a href="#/highlights/{{../taxonomy}}/{{slug}}" class="btn-txt"><span class="btn-label">{{name}}</span></a></li>
+        {{/each}}
+        </ul>
+      </script>
+
+      <script id="highlights-filter-list-collections-template" type="text/x-handlebars-template">
+        <ul class="highlights-filter-list">
+        {{#each items}}
+          <li><a href="#/highlights/{{../taxonomy}}/{{slug}}" class="btn-icon"><span class="icon-paintings"></span><span class="btn-label">{{name}}</span></a></li>      
+        {{/each}}
+        </ul>
+      </script>
+
+      <script id="highlights-filter-list-periods-template" type="text/x-handlebars-template">
+        <ul class="highlights-filter-list">
+        {{#each items}}
+          <li><a href="#/highlights/{{../taxonomy}}/{{slug}}" class="btn-number">{{{split-periods}}}</a></li>
+        {{/each}}
+        </ul>
+      </script>
+
+      <script id="highlights-filter-list-artists-template" type="text/x-handlebars-template">
+        <ul class="highlights-filter-list">
+        {{#each items}}
+          <li><a href="#/highlights/{{../taxonomy}}/{{slug}}" class="btn-person"><span class="btn-label">S</span><span class="btn-label">Serra, Richard</span></a></li>
+        {{/each}}
+        </ul>
+      </script>
+
+      <!-- Guide layout -->
+      <script id="highlights-guide-template" type="text/x-handlebars-template">
+        <div id="highlights-guide" class="page">
+          <div class="page-inner">
+            <h2>Highlights selected by others</h2>
+            <p><strong>NOTICE:</strong> As this application is a proof of concept, curated guides have not yet been implemented.</p>
+            <ul class="highlights-guides-list">
+              <li><a style="background-image: url('assets/img/beatrix.jpg');" href="" class="btn-image"><span class="btn-label">Beatrix</span></a></li>
+            </ul>
+          </div>
+        </div>
+      </script>
+      
+      <!-- My Highlights layout -->
+      <script id="highlights-my-template" type="text/x-handlebars-template">
+        <div id="highlights-my" class="page">
+          <div class="page-inner">
+            {{#each items}}
+              <div id="highlight-my-{{ID}}" class="highlight-my">
+                <div class="highlight-my-container">
+                  <div class="highlight-my-container-inner">
+                    <a href="#/highlight/{{ID}}" class="highlight-my-image" style="background-image: url('{{get-thumbnail}}');"></a>
+                    <span class="highlight-my-title">{{post_title}}</span>
+                    <span class="highlight-my-subtitle">{{post_subtitle}}</span>
+                    <div class="highlight-my-resources">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {{else}}
+              <h2>No items selected</h2>
+              <p>Build your own catalogue by selecting artwork in Highlights.</p>
+            {{/each}}
+          </div>
+        </div>
+      </script>
+      
+      <!-- Resource items -->
+      <script id="highlights-my-resources-template" type="text/x-handlebars-template">
+        <ul class="choices">
+        {{#each items}}
+          <li><a id="resource-{{ID}}" href="" class="{{is-my-highlight}}"><span class="icon icon-{{post_type}}"></span> <span class="btn-label">{{post_type}}</span></a></li>
+        {{/each}}
+        </ul>
+      </script>
+      
+      <!-- Checkout layout -->
+      <script id="highlights-checkout-template" type="text/x-handlebars-template">
+        <div id="highlights-checkout" class="page">
+          <div class="page-inner">
+            <h2>Payment methods not yet implemented</h2>
+            <p><strong>NOTICE:</strong> As this application is a proof of concept, the checkout process has not yet been implemented.</p>
+            <p>Tapping or clicking the <strong>Generate</strong> button below will initiate the generation of a personalised Highlights catalogue immediately.</p>
+          </div>
+        </div>
+      </script>
+
+      <!-- Checkout layout -->
+      <script id="highlights-generate-template" type="text/x-handlebars-template">
+        <div id="highlights-generate" class="page">
+          <div class="page-inner">
+            <div id="progress-icon"><span class="icon icon-gear"></span></div>
+            <p id="highlights-generate-progress">Your Highlights catalogue is being created...</p>
+            <p id="highlights-generate-error">An error occurred while generating your Highlights catalogue </p>
+            <p id="highlights-generate-success">Your Highlights catalogue is ready for download.
+              <a id="highlights-generate-download" href="">Download my Highlights catalogue</a>
+            </p>
+          </div>
+        </div>
+      </script>
+
+      <!-- Totals bar -->
+      <script id="highlights-totals-template" type="text/x-handlebars-template">
+        <div id="header-title">
+          <div id="header-title-inner">
+            <span id="highlights-header-title"><span class="icon icon-refresh"></span> My Highlights Total:</span> <span id="highlights-header-total">{{parse-totals}}</span>
+          </div>
+        </div>
+      </script>
+
+      <!-- Subtotals bar -->
+      <script id="highlights-subtotals-template" type="text/x-handlebars-template">
+        <div id="header-title">
+          <div id="header-title-inner">
+            <span id="highlights-header-title"><span class="icon icon-refresh"></span> <span id="highlights-header-total-add">Add to total: <strong>+</strong> </span><span id="highlights-header-total-subtract">Subtract from total <strong>-</strong> </span><span id="highlights-header-total">{{parse-totals}}</span>
+          </div>
+        </div>
+      </script>
+
+      <script src="assets/app.min.js"></script>
+    </body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Highlights</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <style>   
+          body {
+            margin: 0;
+            padding: 10px 0;
+            background-color: #D9D9D9;
+          }
+          
+          #device-display {
+            width: 320px;
+            height: 24px;
+            background: no-repeat center;
+            background-image: url("assets/img/device-display.png");
+            position: absolute;
+            top: 107px;
+            left: 28px;
+          }
+
+          @media (-webkit-min-device-pixel-ratio: 1.5), (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3/2), (min-resolution: 1.5dppx) {
+            #device-display {
+              background-image: url("assets/img/device-display@2x.png");
+              background-size: auto auto;
+            }
+          }
+
+          #device {
+            width: 371px;
+            height: 785px;
+            margin: 0 auto;
+            background: no-repeat center;
+            background-image: url("assets/img/device.png");
+            position: relative;
+          }
+          
+          @media (-webkit-min-device-pixel-ratio: 1.5), (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 3/2), (min-resolution: 1.5dppx) {
+            #device {
+              background-image: url("assets/img/device@2x.png");
+              background-size: auto auto;              
+            }
+          }
+          
+          iframe {
+            margin-top: 110px;
+            margin-left: 28px;
+            border: 0;
+            width: 320px;
+            height: 568px;
+            background: #fff;
+          }
+        </style>
+    </head>
+    <body>
+      <div id="device">
+        <div id="device-display"></div>
+        <iframe src="index.html"></iframe>
+      </div>
+    </body>
+</html>
